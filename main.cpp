@@ -64,14 +64,14 @@ int main()
     std::vector<Item> items;
     for(int i = 0; i < numItems; i++){
         std::string name;
-        std::cout << "\n Item" << (i + 1) << " name: ";
+        std::cout << "\n Item " << (i + 1) << " name: ";
         std::cin >> name;
         
         double price = readValidDouble(" Item " + std::to_string(i+1) + " price: $");
         
         std::cout << " Who had this? Options:\n";
         for (size_t p = 0; p < people.size(); p++){
-            std::cout << " " << p << ": " << people[p] << "\n";
+            std::cout << " " << (p + 1) << ": " << people[p] << "\n";
         }
         std::cout << " Enter numbers separated by spaces: ";
 
@@ -83,11 +83,12 @@ int main()
         int index;
         std::vector<int> assignedTo;
         while (ss >> index){
-            if (index < 0 || index >= (int)people.size()){
+            int realIndex = index - 1;
+            if (realIndex < 0 || realIndex >= (int)people.size()){
                 std::cout << " (ignoring invalid index " << index << ")\n";
                 continue;
             }
-            assignedTo.push_back(index);
+            assignedTo.push_back(realIndex);
         }
         items.push_back({name, price, assignedTo});
     }
@@ -154,9 +155,9 @@ int main()
     std::cout << "----------------------\n";
     std::cout << "Who paid the bill? Enter their number:\n";
     for (size_t p = 0; p < people.size(); p++){
-        std::cout << " " << p << ": " << people[p] << "\n";
+        std::cout << " " << p + 1 << ": " << people[p] << "\n";
     }
-    int payerIndex = readValidInt("Enter number: ");
+    int payerIndex = readValidInt("Enter number: ") - 1;
 
     std::cout << "\n=== Settling Up ===\n";
     for (size_t i = 0; i < people.size(); i++){
