@@ -121,7 +121,7 @@ int main()
         double tip = subtotal * tipRate;
         double finalTotal = subtotal + tax + tip;
 
-        finalTotal = std::round(finalTotal * 100.0 / 100.0);
+        finalTotal = std::round(finalTotal * 100.0) / 100.0;
 
         finalTotals[i] = finalTotal;
         sumOfRoundedTotals += finalTotal;
