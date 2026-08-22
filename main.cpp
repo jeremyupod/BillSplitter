@@ -41,5 +41,24 @@ int main()
         std::cout << people[i] << " owes: $" << owed[i] << "\n";
     }
 
+    double taxRate = 0.08; // 8% tax
+    double tipRate = 0.20; // 20% tip
+
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "Total: $" << total << "\n\n";
+
+    for (size_t i = 0; i < people.size(); i++){
+        double subtotal = owed[i];
+        double tax = subtotal * taxRate;
+        double tip = subtotal * tipRate;
+        double finalTotal = subtotal + tax + tip;
+
+        std::cout << people[i] << ":\n";
+        std::cout << " Subtotal: $" << subtotal << "\n";
+        std::cout << " Tax: $" << tax << "\n";
+        std::cout << " Tip: $" << tip << "\n";
+        std::cout << " Total: $" << finalTotal << "\n";
+
+    }
     return 0;
 }
