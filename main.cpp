@@ -62,36 +62,51 @@ int main()
     int numItems = readValidInt("\nHow many items are on the receipt? ");
     
     std::vector<Item> items;
+    std::cin.ignore();
+
     for(int i = 0; i < numItems; i++){
         std::string name;
         std::cout << "\n Item " << (i + 1) << " name: ";
-        std::cin >> name;
+        std::getline(std::cin, name);
         
         double price = readValidDouble(" Item " + std::to_string(i+1) + " price: $");
         
-        std::cout << " Who had this? Options:\n";
-        for (size_t p = 0; p < people.size(); p++){
-            std::cout << " " << (p + 1) << ": " << people[p] << "\n";
-        }
-        std::cout << " Enter numbers separated by spaces: ";
-
-        std::cin.ignore(); // discards leftover newline from previos cin
-        std::string line;
-        std::getline(std::cin, line);
-
-        std::stringstream ss(line);
-        int index;
         std::vector<int> assignedTo;
-        while (ss >> index){
-            int realIndex = index - 1;
-            if (realIndex < 0 || realIndex >= (int)people.size()){
-                std::cout << " (ignoring invalid index " << index << ")\n";
-                continue;
+        while(assignedTo.empty()){
+            std::cout << " Who had this? Options:\n";
+            for (size_t p = 0; p < people.size(); p++){
+                std::cout << " " << (p + 1) << ": " << people[p] << "\n";
             }
-            assignedTo.push_back(realIndex);
+            std::cout << " Enter numbers separated by spaces: ";
+
+            std::cin.ignore(); // discards leftover newline from previos cin
+            std::string line;
+            std::getline(std::cin, line);
+
+            std::stringstream ss(line);
+            int index;
+            std::vector<int> attempt;
+            bool lineIsValid = true;
+
+            while (ss >> index){
+                int realIndex = index - 1;
+                if (realIndex < 0 || realIndex >= (int)people.size()){
+                    std::cout << " Invalid index " << index << " - please re-enter the whole list.""\n";
+                    lineIsValid = false;
+                    break;
+            }
+            attempt.push_back(realIndex);
         }
-        items.push_back({name, price, assignedTo});
+    if (lineIsValid && !attempt.empty()){
+        assignedTo = attempt;
     }
+    else if(lineIsValid && attempt.empty()){
+        std::cout << " You must assign this item to at least one person. Please try again.\n";
+    }
+    }
+    items.push_back({name, price, assignedTo});
+}
+    
 
     std::vector<double> owed(people.size(), 0.0);
     double total = 0.0;
