@@ -101,11 +101,18 @@ public:
 
     void settleUp(int payerIndex) {
         std::cout << "\n=== Settling Up ===\n";
+
+        double totalOwedToPayer = 0.0;
+       
         for (size_t i = 0; i < people.size(); i++) {
             if ((int)i == payerIndex) continue;
             std::cout << "  " << people[i].name << " pays " << people[payerIndex].name
                        << ": $" << people[i].finalTotal << "\n";
+            totalOwedToPayer += people[i].finalTotal;
         }
+
+        std::cout << "\n " << people[payerIndex].name << "'s own share: $" << people[payerIndex].finalTotal << "\n";
+        std::cout << " " << people[payerIndex].name << " will be reimbursed a total of: $" << totalOwedToPayer << "\n";
     }
 };
 
