@@ -35,8 +35,10 @@ public:
     vector<Item> items;
     double taxRate;
     double tipRate;
+    double tipAmount;
+    bool useFixedTip;
 
-    BillSplitter(double tax, double tip) : taxRate(tax), tipRate(tip) {}
+    BillSplitter(double tax, double tip, double amount, bool fixed) : taxRate(tax), tipRate(tip), tipAmount(amount), useFixedTip(fixed){}
 
     void addPerson(string name) {
         people.push_back(Person(name));
@@ -72,16 +74,40 @@ public:
         double sumOfRoundedTotals = 0.0;
         for (Person& person : people) {
             person.tax = person.subtotal * taxRate;
-            person.tip = person.subtotal * tipRate;
+            
+            if (useFixedTip) {
+                double total = calculateTotal();
+            
+                if (total > 0) {
+                    person.tip = (person.subtotal / total) * tipAmount;
+                }
+                else {
+                    person.tip = 0.0;
+                }
+            }
+            else {
+                person.tip = person.subtotal * tipRate;
+            }
+
             double raw = person.subtotal + person.tax + person.tip;
             person.finalTotal = round(raw * 100.0) / 100.0;
             sumOfRoundedTotals += person.finalTotal;
         }
 
-        double expectedGrandTotal = round(calculateTotal() * (1 + taxRate + tipRate) * 100.0) / 100.0;
-        double leftover = expectedGrandTotal - sumOfRoundedTotals;
-        if (abs(leftover) >= 0.01 && !people.empty()) {
-            people[0].finalTotal += leftover;
+        double expectedGrandTotal;
+
+        if (useFixedTip) {
+            expectedGrandTotal = round((calculateTotal() * (1 + taxRate) + tipAmount) * 100.0) / 100.0;
+        }
+        
+        else {
+             expectedGrandTotal = round(calculateTotal() * (1 + taxRate + tipRate) * 100.0) / 100.0;
+        }
+   
+            double leftover = expectedGrandTotal - sumOfRoundedTotals;
+        
+            if (abs(leftover) >= 0.01 && !people.empty()) {
+                people[0].finalTotal += leftover;
         }
     }
     void printResults() {
@@ -154,12 +180,37 @@ int main()
     std::cout << "=== Bill Splitter ===\n\n";
 
     double taxPercent = readValidDouble("Enter the tax rate (%): ");
-    double tipPercent = readValidDouble("Enter the tip rate (%): ");
-
     double taxRate = taxPercent / 100.0;
-    double tipRate = tipPercent / 100.0;
 
-    BillSplitter splitter (taxRate, tipRate);
+    std::cout << "\nHow would you like to enter the tip?\n";
+    std::cout << " 1: Percentage\n";
+    std::cout << " 2: Dollar amount\n";
+
+    int tipChoice;
+
+    while(true) {
+        tipChoice = readValidInt("Enter choice: ");
+
+        if (tipChoice == 1 || tipChoice == 2) {
+            break;
+        }
+        std::cout << " Invalid choice. Please enter 1 or 2.\n";
+    }
+
+    double tipRate = 0.0;      
+    double tipAmount = 0.0;
+    bool useFixedTip = false;
+
+    if (tipChoice == 1) {
+        double tipPercent = readValidDouble("Enter the tip rate (%): ");
+        tipRate = tipPercent / 100.0;
+    }
+    else {
+        tipAmount = readValidDouble("Enter the tip amount: $");
+        useFixedTip = true;
+    }
+
+    BillSplitter splitter(taxRate, tipRate, tipAmount, useFixedTip);
 
     int numPeople = readValidInt("How many people are splitting the bill? ");
     for(int i = 0; i < numPeople; i++){
