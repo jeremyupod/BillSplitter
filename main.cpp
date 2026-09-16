@@ -6,10 +6,104 @@
 #include <limits>
 #include <cmath>
 
-struct Item {
+using namespace std;
+
+class Person {
+public:
+    string name;
+    double subtotal = 0.0;
+    double tax = 0.0;
+    double tip = 0.0;
+    double finalTotal = 0.0;
+
+    Person(string personName) : name(personName) {}
+};
+
+class Item {
+public:
     std::string name;
     double price;
     std::vector<int> assignedTo;
+    
+    Item(std::string itemName, double itemPrice, std::vector<int> people)
+        : name(itemName), price(itemPrice), assignedTo(people) {}
+};
+
+class BillSplitter {
+public:
+    vector<Person> people;
+    vector<Item> items;
+    double taxRate;
+    double tipRate;
+
+    BillSplitter(double tax, double tip) : taxRate(tax), tipRate(tip) {}
+
+    void addPerson(string name) {
+        people.push_back(Person(name));
+    }
+
+    void addItem(string name, double price, vector<int> assignedTo) {
+        items.push_back(Item(name, price, assignedTo));
+    }
+
+    double calculateTotal() {
+        double total = 0.0;
+        for (const Item& item :items) {
+            total += item.price;
+        }
+        return total;
+    }
+
+    void calculateSplits() {
+        for (Person& person : people) {
+            person.subtotal = 0.0;
+        }
+
+        for (const Item& item : items) {
+            double splitAmount = item.price / item.assignedTo.size();
+            for (int personIndex: item.assignedTo) {
+                people[personIndex].subtotal += splitAmount;
+            }
+        }
+
+        double sumOfRoundedTotals = 0.0;
+        for (Person& person : people) {
+            person.tax = person.subtotal * taxRate;
+            person.tip = person.subtotal * tipRate;
+            double raw = person.subtotal + person.tax + person.tip;
+            person.finalTotal = round(raw * 100.0) / 100.0;
+            sumOfRoundedTotals += person.finalTotal;
+        }
+
+        double expectedGrandTotal = round(calculateTotal() * (1 + taxRate + tipRate) * 100.0) / 100.0;
+        double leftover = expectedGrandTotal - sumOfRoundedTotals;
+        if (abs(leftover) >= 0.01 && !people.empty()) {
+            people[0].finalTotal += leftover;
+        }
+    }
+    void printResults() {
+        std::cout << std::fixed << std::setprecision(2);
+        std::cout << "\n----------------------\n";
+        std::cout << "Total: $" << calculateTotal() << "\n";
+        std::cout << "----------------------\n\n";
+
+        for (const Person& person : people) {
+            std::cout << person.name << ":\n";
+            std::cout << "  Subtotal: $" << person.subtotal << "\n";
+            std::cout << "  Tax:      $" << person.tax << "\n";
+            std::cout << "  Tip:      $" << person.tip << "\n";
+            std::cout << "  Total:    $" << person.finalTotal << "\n\n";
+        }
+    }
+
+    void settleUp(int payerIndex) {
+        std::cout << "\n=== Settling Up ===\n";
+        for (size_t i = 0; i < people.size(); i++) {
+            if ((int)i == payerIndex) continue;
+            std::cout << "  " << people[i].name << " pays " << people[payerIndex].name
+                       << ": $" << people[i].finalTotal << "\n";
+        }
+    }
 };
 
 int readValidInt(const std::string& prompt){
@@ -91,7 +185,7 @@ int main()
             while (ss >> index){
                 int realIndex = index - 1;
                 if (realIndex < 0 || realIndex >= (int)people.size()){
-                    std::cout << " Invalid index " << index << " - please re-enter the whole list.""\n";
+                    std::cout << " Invalid index " << index << " - please re-enter the whole list.\n";
                     lineIsValid = false;
                     break;
             }
@@ -126,7 +220,7 @@ int main()
     }
 
     double taxRate = 0.1075; // 10.75% tax
-    double tipRate = 0.15; // 15% tip
+    double tipRate = 0.2265; // 15% tip
 
     std::vector<double> finalTotals(people.size());
     double sumOfRoundedTotals = 0.0;
