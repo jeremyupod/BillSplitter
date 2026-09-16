@@ -153,7 +153,13 @@ int main()
 {
     std::cout << "=== Bill Splitter ===\n\n";
 
-    BillSplitter splitter (0.1075, 0.15);
+    double taxPercent = readValidDouble("Enter the tax rate (%): ");
+    double tipPercent = readValidDouble("Enter the tip rate (%): ");
+
+    double taxRate = taxPercent / 100.0;
+    double tipRate = tipPercent / 100.0;
+
+    BillSplitter splitter (taxRate, tipRate);
 
     int numPeople = readValidInt("How many people are splitting the bill? ");
     for(int i = 0; i < numPeople; i++){
