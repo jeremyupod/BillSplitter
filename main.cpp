@@ -21,11 +21,11 @@ public:
 
 class Item {
 public:
-    std::string name;
+    string name;
     double price;
-    std::vector<int> assignedTo;
+    vector<int> assignedTo;
     
-    Item(std::string itemName, double itemPrice, std::vector<int> people)
+    Item(string itemName, double itemPrice, vector<int> people)
         : name(itemName), price(itemPrice), assignedTo(people) {}
 };
 
@@ -111,46 +111,46 @@ public:
         }
     }
     void printResults() {
-        std::cout << std::fixed << std::setprecision(2);
-        std::cout << "\n----------------------\n";
-        std::cout << "Total: $" << calculateTotal() << "\n";
-        std::cout << "----------------------\n\n";
+        cout << fixed << setprecision(2);
+        cout << "\n----------------------\n";
+        cout << "Total: $" << calculateTotal() << "\n";
+        cout << "----------------------\n\n";
 
         for (const Person& person : people) {
-            std::cout << person.name << ":\n";
-            std::cout << "  Subtotal: $" << person.subtotal << "\n";
-            std::cout << "  Tax:      $" << person.tax << "\n";
-            std::cout << "  Tip:      $" << person.tip << "\n";
-            std::cout << "  Total:    $" << person.finalTotal << "\n\n";
+            cout << person.name << ":\n";
+            cout << "  Subtotal: $" << person.subtotal << "\n";
+            cout << "  Tax:      $" << person.tax << "\n";
+            cout << "  Tip:      $" << person.tip << "\n";
+            cout << "  Total:    $" << person.finalTotal << "\n\n";
         }
     }
 
     void settleUp(int payerIndex) {
-        std::cout << "\n=== Settling Up ===\n";
+        cout << "\n=== Settling Up ===\n";
 
         double totalOwedToPayer = 0.0;
        
         for (size_t i = 0; i < people.size(); i++) {
             if ((int)i == payerIndex) continue;
-            std::cout << "  " << people[i].name << " pays " << people[payerIndex].name
+            cout << "  " << people[i].name << " pays " << people[payerIndex].name
                        << ": $" << people[i].finalTotal << "\n";
             totalOwedToPayer += people[i].finalTotal;
         }
 
-        std::cout << "\n " << people[payerIndex].name << "'s own share: $" << people[payerIndex].finalTotal << "\n";
-        std::cout << " " << people[payerIndex].name << " will be reimbursed a total of: $" << totalOwedToPayer << "\n";
+        cout << "\n " << people[payerIndex].name << "'s own share: $" << people[payerIndex].finalTotal << "\n";
+        cout << " " << people[payerIndex].name << " will be reimbursed a total of: $" << totalOwedToPayer << "\n";
     }
 };
 
-int readValidInt(const std::string& prompt){
+int readValidInt(const string& prompt){
     int value;
     while (true){
-        std::cout << prompt;
-        std::cin >> value;
-        if (std::cin.fail()){
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << " Invalid number, please try again!\n";
+        cout << prompt;
+        cin >> value;
+        if (cin.fail()){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << " Invalid number, please try again!\n";
         }
         else{
             return value;
@@ -159,15 +159,15 @@ int readValidInt(const std::string& prompt){
     }
 }
 
-double readValidDouble(const std::string& prompt){
+double readValidDouble(const string& prompt){
     double value;
     while (true){
-        std::cout << prompt;
-        std::cin >> value;
-        if (std::cin.fail()){
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << " Invalid number, please try again!\n";
+        cout << prompt;
+        cin >> value;
+        if (cin.fail()){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << " Invalid number, please try again!\n";
         }
         else{
                 return value;
@@ -177,14 +177,14 @@ double readValidDouble(const std::string& prompt){
 
 int main()
 {
-    std::cout << "=== Bill Splitter ===\n\n";
+    cout << "=== Bill Splitter ===\n\n";
 
     double taxPercent = readValidDouble("Enter the tax rate (%): ");
     double taxRate = taxPercent / 100.0;
 
-    std::cout << "\nHow would you like to enter the tip?\n";
-    std::cout << " 1: Percentage\n";
-    std::cout << " 2: Dollar amount\n";
+    cout << "\nHow would you like to enter the tip?\n";
+    cout << " 1: Percentage\n";
+    cout << " 2: Dollar amount\n";
 
     int tipChoice;
 
@@ -194,7 +194,7 @@ int main()
         if (tipChoice == 1 || tipChoice == 2) {
             break;
         }
-        std::cout << " Invalid choice. Please enter 1 or 2.\n";
+        cout << " Invalid choice. Please enter 1 or 2.\n";
     }
 
     double tipRate = 0.0;      
@@ -214,43 +214,43 @@ int main()
 
     int numPeople = readValidInt("How many people are splitting the bill? ");
     for(int i = 0; i < numPeople; i++){
-        std::string name;
-        std::cout << " Name of person " << (i + 1) << ": ";
-        std::cin >> name;
+        string name;
+        cout << " Name of person " << (i + 1) << ": ";
+        cin >> name;
         splitter.addPerson(name);
     }
 
     int numItems = readValidInt("\nHow many items are on the receipt? ");
-    std::cin.ignore();
+    cin.ignore();
 
     for(int i = 0; i < numItems; i++){
-        std::string name;
-        std::cout << "\n Item " << (i + 1) << " name: ";
-        std::getline(std::cin, name);
+        string name;
+        cout << "\n Item " << (i + 1) << " name: ";
+        getline(cin, name);
         
-        double price = readValidDouble(" Item " + std::to_string(i+1) + " price: $");
+        double price = readValidDouble(" Item " + to_string(i+1) + " price: $");
         
-        std::vector<int> assignedTo;
+        vector<int> assignedTo;
         while(assignedTo.empty()){
-            std::cout << " Who had this? Options:\n";
+            cout << " Who had this? Options:\n";
             for (size_t p = 0; p < splitter.people.size(); p++){
-                std::cout << " " << (p + 1) << ": " << splitter.people[p].name << "\n";
+                cout << " " << (p + 1) << ": " << splitter.people[p].name << "\n";
             }
-            std::cout << " Enter numbers separated by spaces: ";
+            cout << " Enter numbers separated by spaces: ";
 
-            std::cin.ignore(); // discards leftover newline from previous cin
-            std::string line;
-            std::getline(std::cin, line);
+            cin.ignore(); // discards leftover newline from previous cin
+            string line;
+            getline(cin, line);
 
-            std::stringstream ss(line);
+            stringstream ss(line);
             int index;
-            std::vector<int> attempt;
+            vector<int> attempt;
             bool lineIsValid = true;
 
             while (ss >> index){
                 int realIndex = index - 1;
                 if (realIndex < 0 || realIndex >= (int)splitter.people.size()){
-                    std::cout << " Invalid index " << index << " - please re-enter the whole list.\n";
+                    cout << " Invalid index " << index << " - please re-enter the whole list.\n";
                     lineIsValid = false;
                     break;
                 }
@@ -260,7 +260,7 @@ int main()
                 assignedTo = attempt;
             }
                 else if(lineIsValid && attempt.empty()){
-                    std::cout << " You must assign this item to at least one person. Please try again.\n";
+                    cout << " You must assign this item to at least one person. Please try again.\n";
             }
         }
         splitter.addItem(name, price, assignedTo);
@@ -269,10 +269,10 @@ int main()
     splitter.calculateSplits();
     splitter.printResults();
 
-    std::cout << "----------------------\n";
-    std::cout << "Who paid the bill? Enter their number:\n";
+    cout << "----------------------\n";
+    cout << "Who paid the bill? Enter their number:\n";
     for (size_t p = 0; p < splitter.people.size(); p++) {
-        std::cout << "  " << (p + 1) << ": " << splitter.people[p].name << "\n";
+        cout << "  " << (p + 1) << ": " << splitter.people[p].name << "\n";
     }
 
     int payerIndex;
